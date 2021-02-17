@@ -1,5 +1,7 @@
 # Multitech Gateway Installation onto the Cambridge Sensor Network
 
+https://www.thethingsindustries.com/docs/gateways/multitechconduit/
+
 ## General setup
 
 These gateways should all be registered to the main CSN TTN account with gateway IDs like `csn-mtcap-014abe`, `csn-mtcdtip-003c6f` etc (i.e. "csn-" + the product code of the gateway + the last 12 bits of the LoRa node address). 
@@ -25,8 +27,9 @@ in `acp_prod/acp_lorawan_gateways/secrets`.
 <!-- 6. Router: `ttn-router-eu` (will be suggested automatically after selecting Frequency Plan). -->
 6. Location: click on the map.
 <!-- 8. Antenna Placement: `indoor`|`outdoor` as appropriate. -->
-9. Click `Create Gateway` bottom right of page.
-10. After registration, generate an API Key which will be needed in the Multitech 'setup packet forwarder' step below.
+7. Click `Create Gateway` bottom right of page.
+8. Download the `global_conf.json` which will be required in Basic Station setup step below.
+10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below.
 
 ### Initial setup - Multitech Gateway and https://devicehq.com
 
@@ -42,29 +45,31 @@ These instructions apply to gateways shipped with >1.6.x firmware.
 
 1. First boot - change admin password and setup IP networking
     - Browse to https://192.168.2.1/ and continue despite the certificate warning. We can configure a real certificate later.
-    - The default credentials to log in to the web interface are admin/admin
+    - On first login, the wizard will ask you the username which is `admin` and ask to set a password. (On some older versions, first time login is required with the default credentials which are admin/admin)
+    - Get the password from `acp_prod/acp_lorawan_gateways/secrets`, set the 'admin' user password to this.
     - A wizard will appear. We will accept most of the defaults.
-    - Get the password from SmartCambridge tfc_prod/secrets.sh, reset the 'admin' user password to this.
     - On the time zone configuration section, set the time zone to Europe/London
-    - On the network settings page, add the correct information for the gateway address and DNS servers. For the Huawei network this should be 192.168.2.254 for the gateway, and Google's DNS servers 8.8.8.8 and 4.4.4.4
-    - The gateway is configured to run a DHCP **server** by default. Disable this by choosing the neworking 'DHCP Client' option
-    - Reboot
+    - Select the default for others and finish.
+    - The gateway is configured to run a DHCP **server** by default. Go to `Setup > Network Interfaces`. Edit the eth0 interface and set bridge as `--` and IPV4 settings mode to `DHCP Client`.
+    - Go to `Setup > DHCP Configuration`. Edit the IPv4 DHCP Server entry to disable the DHCP Server.
+    - Go to `Setup > Global DNS` and set the DNS Servers as Primary: 8.8.8.8 and Secondary: 4.4.4.4
+    - Save and Apply to Reboot.
     
 2. Second boot - Update firmware
     - The gateway should reboot as a DHCP client, so now find IP address.
     - Browse to [MultiTech Downloads](http://www.multitech.net/developer/downloads/) pages. For the metal gateways, use "Conduit: AEP Model w/Node-RED", for the plastic Conduit AP use "Conduit Access Point: AEP Model (MTCAP)"
-    - Browse to IP address of gateway, login as 'admin' now with tfc_prod/secrets.sh password. From menu select Administration - Update Firmware.
+    - Browse to IP address of gateway, login as 'admin' now with `acp_prod/acp_lorawan_gateways/secrets` password. From menu select `Administration > Firmware Upgrade`.
     - Note that every time the firmware on the devices is updated, the packet forwarder will need to be reinstalled (if a custom packet forwarder is being used).
-    - You may need to upgrade through several different version of firmware. If you want to upgrade to 5.x (CSN default) you must be on at least 1.6.4 before you begin. For more information, see: http://www.multitech.net/developer/software/aep/aep-firmware-changelog/
-    - Reboot
+    - You may need to upgrade through several different version of firmware one at a time. If you want to upgrade to 5.x (CSN default) you must be on at least 1.6.4 before you begin. For more information, see: http://www.multitech.net/developer/software/aep/aep-firmware-changelog/
+    - Once upgraded, the gateway will reboot by itself.
     
 3. Third boot - set up 'Remote Management' in gateway using Multitech key
     - From the gateway's web interface, select `Administration` -> `Remote Management`
     - Enter 'Account Key' as obtained from Device HQ web site (top-right account name, drop-down, Account Info)
     - Switch auto update Check-In Interval to 240, check the 'Enabled' checkbox and click 'Submit' button.
-    - On gateway menu, click 'Save and restart' and gateway should appear 
-    - Configure the gateway in [Device HQ](https://www.devicehq.com/), email admin@smartcambridge.org, pwd as tfc_prod/secrets.sh
-    - Browse to https://devicehq.com, logon as admin@smartcambridge.org.
+    - On gateway menu, click `Save and Apply` and gateway should appear 
+    - Configure the gateway in [Device HQ](https://www.devicehq.com/), email `admin@smartcambridge.org`, pwd as `acp_prod/acp_lorawan_gateways/secrets`
+    - Browse to https://devicehq.com, logon as `admin@smartcambridge.org`.
     - Click `Devices` (which means gateways). In due course the new gateway will appear, matching the
     `Serial` written on the device (or you might note the gateway with a ~2min uptime).
     - Click the right-side 'pen' edit symbol for the new gateway, update the `Description` to exactly match the 
@@ -80,9 +85,9 @@ These instructions apply to gateways shipped with >1.6.x firmware.
     - At the top `LoRa Mode` -> `Mode` drop-down, select `DISABLED` and `Submit`. To check your settings you can select
     `Network Server` and `Packet Forwarder` and confirm the `EU868` settings are there ok. Make sure you finish with
     the mode set to `DISABLED`.
-    - On the left-menu, click `Save and Restart`.
+    - On the left-menu, click `Save and Apply`.
     
-5. Fifth boot - set up custom packet forwarder via SSH terminal session to gateway
+<!-- 5. Fifth boot - set up custom packet forwarder via SSH terminal session to gateway
     - SSH to the IP address of the LoRaWAN gateway and log in with admin credentials.
     - We will switch to using Jac Kersing's packet forwarder. Instructions for doing this may be found on 
     [TTN's web site about AEP MultiTech Conduits](https://www.thethingsnetwork.org/docs/gateways/multitech/aep.html).
@@ -93,7 +98,33 @@ These instructions apply to gateways shipped with >1.6.x firmware.
     - `Gateway ID:` as entered in TTN console, e.g. 'csn-mtcdtip-012345 <Enter>'
     - `Gateway Key:` <copy/paste from TTN gateway 'Overview' page>, i.e. begins `ttn-account-...`. Hit '1 <Enter>' to confirm.
     - `Email...`: `admin@smartcambridge.org` <Enter>, confirm all with '1 <Enter>'
-    - Visit the TTN console and view `Gateways` and in a few mins you should see new gateway as 'connected'.
+    - Visit the TTN console and view `Gateways` and in a few mins you should see new gateway as 'connected'. -->
+
+5. Fifth boot - set up Basic Station to connect the gateway to TTN
+    - Go to `LoRaWAN > Network Settings` and select the LoRa Mode as Basic Station.
+    - Set the `Credentials` as CUPS.
+    - You'll need the the Things Stack CLI to get the CUPS keys. So install the CLI using snap on your laptop/workstation as;
+    ```
+    sudo snap install ttn-lw-stack
+    sudo snap alias ttn-lw-stack.ttn-lw-cli ttn-lw-cli
+    ```
+    - Run `ttn-lw-cli login`. This will open a browser window or provide you with a link to open in a browser for authorization.
+    - CUPS also provides support for LNS, so run the following to set the LNS credentials for CUPS. If succesful you'll receive a response output with the gateway_id.
+    ```
+    export GTW_ID="your-gateway-id"
+    export LNS_KEY="your-lns-api-key"
+    export SECRET=$(echo -n $LNS_KEY | xxd -ps -u -c 8192)
+    ttn-lw-cli gateways update $GTW_ID --lbs-lns-secret.value $SECRET
+    ```
+    - Set the URI as `https://eu1.cloud.thethings.network:443`.
+    - Copy the contents of `global_conf.json` to Station Config.
+    - Get the complete certificate from *https://www.thethingsindustries.com/docs/reference/root-certificates/* and paste the contents of the file in Server Cert.
+    - Generate the CUPS key file with the following steps and copy the contents of the `cups.key` file into Gateway Key.
+    ```
+    export CUPS_KEY="your-cups-api-key"
+    echo "Authorization: Bearer $CUPS_KEY" | perl -p -e 's/\r\n|\n|\r/\r\n/g'  > cups.key
+    ```
+    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console.
     
 6. Sixth boot - save configuration to survive factory resets (if desired)
     - Save default config via gateway menu Administration - Save/Restore.
