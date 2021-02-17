@@ -28,8 +28,8 @@ in `acp_prod/acp_lorawan_gateways/secrets`.
 6. Location: click on the map.
 <!-- 8. Antenna Placement: `indoor`|`outdoor` as appropriate. -->
 7. Click `Create Gateway` bottom right of page.
-8. Download the `global_conf.json` which will be required in Basic Station setup step below.
-10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below.
+8. Download the `global_conf.json` which will be required in TTN setup step below.
+10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below. (Not required for Packet Forwarder)
 
 ### Initial setup - Multitech Gateway and https://devicehq.com
 
@@ -100,7 +100,12 @@ These instructions apply to gateways shipped with >1.6.x firmware.
     - `Email...`: `admin@smartcambridge.org` <Enter>, confirm all with '1 <Enter>'
     - Visit the TTN console and view `Gateways` and in a few mins you should see new gateway as 'connected'. -->
 
-5. Fifth boot - set up Basic Station to connect the gateway to TTN
+5. Fifth boot - Set up Packet Forwarder mode for TTN
+    - Go to `LoRaWAN > Network Settings` and select the LoRa Mode as `PACKET FORWARDER`
+    - Ensure Channel Plan is EU868.
+    - Under `Server`, set Network to `The Things Network` and the server address as given in the `global_conf.json` file.
+    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console.
+<!-- 5. Fifth boot - set up Basic Station to connect the gateway to TTN (**Not working as of now**)
     - Go to `LoRaWAN > Network Settings` and select the LoRa Mode as Basic Station.
     - Set the `Credentials` as CUPS.
     - You'll need the the Things Stack CLI to get the CUPS keys. So install the CLI using snap on your laptop/workstation as;
@@ -124,7 +129,7 @@ These instructions apply to gateways shipped with >1.6.x firmware.
     export CUPS_KEY="your-cups-api-key"
     echo "Authorization: Bearer $CUPS_KEY" | perl -p -e 's/\r\n|\n|\r/\r\n/g'  > cups.key
     ```
-    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console.
+    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console. -->
     
 6. Sixth boot - save configuration to survive factory resets (if desired)
     - Save default config via gateway menu Administration - Save/Restore.
