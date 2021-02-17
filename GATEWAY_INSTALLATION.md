@@ -29,7 +29,7 @@ in `acp_prod/acp_lorawan_gateways/secrets`.
 <!-- 8. Antenna Placement: `indoor`|`outdoor` as appropriate. -->
 7. Click `Create Gateway` bottom right of page.
 8. Download the `global_conf.json` which will be required in TTN setup step below.
-10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below. (Not required for Packet Forwarder)
+<!-- 10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below. (Not required for Packet Forwarder) -->
 
 ### Initial setup - Multitech Gateway and https://devicehq.com
 
