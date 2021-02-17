@@ -1,7 +1,5 @@
 # Multitech Gateway Installation onto the Cambridge Sensor Network
 
-https://www.thethingsindustries.com/docs/gateways/multitechconduit/
-
 ## General setup
 
 These gateways should all be registered to the main CSN TTN account with gateway IDs like `csn-mtcap-014abe`, `csn-mtcdtip-003c6f` etc (i.e. "csn-" + the product code of the gateway + the last 12 bits of the LoRa node address). 
