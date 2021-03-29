@@ -66,7 +66,8 @@ These instructions apply to gateways shipped with >1.6.x firmware.
     - Browse to [MultiTech Downloads](http://www.multitech.net/developer/downloads/) pages. Note these are FTP downloads of zip files,
     if you use the Windows FTP command you must set 'bin' before the download or Windows will corrupt the file. The zip file contains a '.bin'
     file, which is what you will upload to the gateway.
-    - For the metal gateways, use "Conduit: AEP Model w/Node-RED", for the plastic Conduit AP use "Conduit Access Point: AEP Model (MTCAP)"
+    - For the metal gateways, use "Conduit: mPower Models (MTCDT-X-2XXA or MTCDTIP-x-2xxA)", 
+    - for the plastic Conduit AP use "Conduit Access Point: mPower Model (MTCAP)"
     - Browse to IP address of gateway, login as 'admin' now with `acp_prod/acp_lorawan_gateways/secrets` password. From menu select `Administration > Firmware Upgrade`.
     - Note that every time the firmware on the devices is updated, the packet forwarder will need to be reinstalled (if a custom packet forwarder is being used).
     - You may need to upgrade through several different version of firmware one at a time. If you want to upgrade to 5.x (CSN default) you must be on at least 1.6.4 before you begin. For more information, see: http://www.multitech.net/developer/software/aep/aep-firmware-changelog/
