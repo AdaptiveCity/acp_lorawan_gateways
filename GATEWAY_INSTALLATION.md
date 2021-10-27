@@ -32,9 +32,10 @@ in `acp_prod/acp_lorawan_gateways/secrets`.
 14. Update the location on the map. Save Changes.
 15. Download the `global_conf.json` which will be required in TTN setup step below.
 
-<!-- 10. After registration, generate two API Keys (one for LNS and one for CUPS) which will be needed in the Basic Station Setup step below. (Not required for Packet Forwarder) -->
-
 ### Initial setup - Multitech Gateway and https://devicehq.com
+
+The Multitech Gateway username is `admin` and the password is the same as for the TTN CambridgeSensorNetwork. See
+`acp_lorawan_gateways/secrets/keys.txt`.
 
 1. Get a stand-alone ethernet switch, no WAN connectivity needed.
 2. Connect the Multitech gateway to the switch and power it up.  The gateway will start with IP 192.168.2.1 and
@@ -112,34 +113,10 @@ These instructions apply to gateways shipped with >1.6.x firmware.
 5. Fifth boot - Set up Packet Forwarder mode for TTN
     - Go to `LoRaWAN > Network Settings` and select the LoRa Mode as `PACKET FORWARDER`
     - Ensure Channel Plan is EU868.
-    - Under `Server`, set Network to `The Things Network` and the server address from `gateway_conf` in the `global_conf.json` file downloaded earlier.
-    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console.
+    - Under `Server Settings`, set the server address from `gateway_conf` in the `global_conf.json` file downloaded earlier e.g.
+      `eu1.cloud.thethings.network`. Also set the Upstream Port and Downstream Port to the values in the `global_conf.json e.g. `1700`.
+    - Click `Submit` and the (red, top-left) `Save and Apply`. The gateway should appear on the TTN console with the live data uplink messages.
 
 6. Sixth boot - save configuration to survive factory resets (if desired)
-    - Save default config via gateway menu Administration - Save/Restore.
+    - Save default config via gateway menu Administration - Save/Restore - Set Current Config As User-defined Default. Then hit 'OK' to confirm.
 
-<!-- PRIOR INFO FOR V2 TTN: 5. Fifth boot - set up Basic Station to connect the gateway to TTN (**Not working as of now**)
-    - Go to `LoRaWAN > Network Settings` and select the LoRa Mode as Basic Station.
-    - Set the `Credentials` as CUPS.
-    - You'll need the the Things Stack CLI to get the CUPS keys. So install the CLI using snap on your laptop/workstation as;
-    ```
-    sudo snap install ttn-lw-stack
-    sudo snap alias ttn-lw-stack.ttn-lw-cli ttn-lw-cli
-    ```
-    - Run `ttn-lw-cli login`. This will open a browser window or provide you with a link to open in a browser for authorization.
-    - CUPS also provides support for LNS, so run the following to set the LNS credentials for CUPS. If succesful you'll receive a response output with the gateway_id.
-    ```
-    export GTW_ID="your-gateway-id"
-    export LNS_KEY="your-lns-api-key"
-    export SECRET=$(echo -n $LNS_KEY | xxd -ps -u -c 8192)
-    ttn-lw-cli gateways update $GTW_ID --lbs-lns-secret.value $SECRET
-    ```
-    - Set the URI as `https://eu1.cloud.thethings.network:443`.
-    - Copy the contents of `global_conf.json` to Station Config.
-    - Get the complete certificate from *https://www.thethingsindustries.com/docs/reference/root-certificates/* and paste the contents of the file in Server Cert.
-    - Generate the CUPS key file with the following steps and copy the contents of the `cups.key` file into Gateway Key.
-    ```
-    export CUPS_KEY="your-cups-api-key"
-    echo "Authorization: Bearer $CUPS_KEY" | perl -p -e 's/\r\n|\n|\r/\r\n/g'  > cups.key
-    ```
-    - Click `Submit` and the `Save and Apply`. The gateway should appear on the TTN console. -->
